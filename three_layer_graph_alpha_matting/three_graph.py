@@ -1,7 +1,6 @@
 import numpy as np
-import scipy.spatial as spatial
 import scipy.sparse as sparse
-from kdtree import KDTree
+from three_layer_graph_alpha_matting.kdtree import KDTree
 
 
 def get_three_graph(
@@ -17,7 +16,7 @@ def get_three_graph(
     x = np.tile(np.arange(1, n + 1), (m, 1))
     y = np.tile(np.arange(1, m + 1), (n, 1)).T
     featherArray = np.dstack((I, y / 12, x / 12))
-    X = featherArray.reshape(N, -1, order="F")
+    X = featherArray.reshape(N, -1, order="F").astype(np.float32)
 
     # Calculate K0
     kdtree = KDTree(X)
@@ -27,7 +26,7 @@ def get_three_graph(
     D = D[:, 1:].astype(np.float64)
 
     sumD = get_sumD(D, IDX, K0).reshape(N, 1)
-    X = np.hstack((X[:, :3], X[:, 3:5], sumD))
+    X = np.hstack((X[:, :3], X[:, 3:5], sumD)).astype(np.float32)
 
     # Calculate K1
     kdtree = KDTree(X)
@@ -37,7 +36,7 @@ def get_three_graph(
     D = D[:, 1:].astype(np.float64)
 
     sumD = get_sumD(D, IDX, K1).reshape(N, 1)
-    X = np.hstack((X[:, :3], X[:, 3:5] / 120, sumD))
+    X = np.hstack((X[:, :3], X[:, 3:5] / 120, sumD)).astype(np.float32)
 
     IX = np.argsort(np.sum(D**2, axis=1))[: int(0.9 * N)].reshape(-1, 1)
     flag = np.zeros(m * n, dtype=np.uint8)
@@ -56,7 +55,7 @@ def get_three_graph(
     D = D[:, 1:].astype(np.float64)
 
     sumD = get_sumD(D, IDX, K2).reshape(N, 1)
-    X = np.hstack((X[:, :3], X[:, 3:5] / 12, sumD))
+    X = np.hstack((X[:, :3], X[:, 3:5] / 12, sumD)).astype(np.float32)
 
     flag = select_pix(I, D, ratio_1)
     neighborsArray = IDX.reshape(m, n, K2, order="F")

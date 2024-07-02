@@ -1,10 +1,11 @@
 import numpy as np
 import scipy.sparse as sparse
 
-from label_expansion import label_expansion
-from three_graph import get_three_graph
-from color_line_laplace import get_color_line_laplace
-from utils import *
+
+from three_layer_graph_alpha_matting.label_expansion import label_expansion
+from three_layer_graph_alpha_matting.three_graph import get_three_graph
+from three_layer_graph_alpha_matting.color_line_laplace import get_color_line_laplace
+from three_layer_graph_alpha_matting.utils import *
 
 
 def calculate_matte(
@@ -32,14 +33,14 @@ def calculate_matte(
     L1 = get_three_graph(I, t, K0, K1, K2, K3, ratio_1, ratio_2)
     L2 = get_color_line_laplace(I, t, epsilon, win_size)
 
-    m, n = trimap.shape
+    m, n = t.shape
     L = L1 + delta * L2
 
-    M = (trimap == 255) | (trimap == 0).astype(np.uint8)
-    G = (trimap == 255).flatten(order="F").reshape(-1, 1).astype(np.uint8)
+    M = (t == 255) | (t == 0).astype(np.uint8)
+    G = (t == 255).flatten(order="F").reshape(-1, 1).astype(np.uint8)
     Lambda = lambda_val * sparse.diags(M.flatten(order="F"), 0, format="csr")
 
-    initial_guess = trimap.astype(np.float64).flatten(order="F") / 255.0
+    initial_guess = t.astype(np.float64).flatten(order="F") / 255.0
     Alpha, _ = sparse.linalg.bicgstab(
         L + Lambda, Lambda.dot(G), x0=initial_guess, rtol=tol, maxiter=maxit
     )
