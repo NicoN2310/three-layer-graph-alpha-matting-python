@@ -4,7 +4,12 @@ from numba import njit, prange
 # Numba support for object pointers is currently (Q4 2019) wonky,
 # which is why plain arrays with indices are used instead.
 
-@njit("i8(i8[:], i8[:], i8[:], i8[:], i8[:], f4[:, :, :], f4[:], f4[:, :], i8[:], i8)", cache=True, nogil=True)
+
+@njit(
+    "i8(i8[:], i8[:], i8[:], i8[:], i8[:], f4[:, :, :], f4[:], f4[:, :], i8[:], i8)",
+    cache=True,
+    nogil=True,
+)
 def _make_tree(
     i0_inds,
     i1_inds,
@@ -134,7 +139,12 @@ def _make_tree(
     return n_nodes
 
 
-@njit("void(i8[:], i8[:], i8[:], i8[:], i8[:], f4[:, :, :], f4[:], f4[:, :], f4[:, :], i8[:, :], f4[:, :], i8)", cache=True, nogil=True, parallel=True)
+@njit(
+    "void(i8[:], i8[:], i8[:], i8[:], i8[:], f4[:, :, :], f4[:], f4[:, :], f4[:, :], i8[:, :], f4[:, :], i8)",
+    cache=True,
+    nogil=True,
+    parallel=True,
+)
 def _find_knn(
     i0_inds,
     i1_inds,
@@ -232,6 +242,7 @@ def _find_knn(
 
         # Workaround for https://github.com/numba/numba/issues/5156
         stack_size += 0
+
 
 class KDTree(object):
     """KDTree implementation"""
