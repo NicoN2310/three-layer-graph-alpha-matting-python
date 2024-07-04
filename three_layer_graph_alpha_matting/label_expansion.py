@@ -11,6 +11,7 @@ def label_expansion(img, cdata):
     weights = np.array([0.29894, 0.58704, 0.11402])
     weights /= weights.sum()
 
+    # TODO: Very slow, need to optimize
     grayI = np.frompyfunc(_custom_round, 1, 1)(
         np.round(np.dot(I[..., :3], weights), 4)
     ).astype(np.uint8)

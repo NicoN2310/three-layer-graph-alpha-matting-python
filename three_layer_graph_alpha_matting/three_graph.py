@@ -80,13 +80,16 @@ def get_three_graph(
     L = 0.1 * (W3.T @ W3) + 0.3 * (W2.T @ W2) + (W1.T @ W1)
     return L.tocsr()
 
-
+# TODO: Reshape is very slow... need to optimize --> 2/3 better performance
 def get_sumD(D, IDX, K):
     layerNum = 120
     sumD = np.sum(D, axis=1)
 
+    resh_1 = np.reshape(D.T, [-1, 1])
+    resh_2 = np.reshape(IDX.T, [-1, 1])
+    
     for _ in range(layerNum):
-        sumD = np.reshape(D.T, [-1, 1]) + sumD[np.reshape(IDX.T, [-1, 1])]
+        sumD = resh_1 + sumD[resh_2]
         sumD = np.reshape(sumD.T, [K, -1])
         sumD = sumD.T
         sumD = np.sum(sumD, axis=1)
@@ -116,14 +119,16 @@ def get_graph(I, trimap, neighborsArray, flag, tol=1e-3):
     A = neighbors - np.transpose(X).reshape((X.shape[1], 1, N), order="F")
 
     w_array = np.zeros((K, N))
+    identity = np.identity(K)
 
     for ind in indArray:
         part = np.squeeze(A[:, :, ind])
         C = part.T @ part
-        if np.trace(C) == 0:
+        trace = np.trace(C)
+        if trace == 0:
             w = np.ones(K)
         else:
-            C = C + tol * np.trace(C) * np.identity(K)
+            C = C + tol * trace * identity
             w = np.linalg.solve(C, np.ones((K, 1)))
         w = w / np.sum(w)
         w_array[:, ind] = w.reshape(-1, 1)
@@ -155,11 +160,13 @@ def select_pix(img_input, D, selectedRatio):
     m, n, _ = img_input.shape
     N = m * n
 
+    r = int(np.round(0.7 * N))
+
     B = np.sum(D**2, axis=1)
-    B /= B[int(np.round(0.7 * N))]
+    B /= B[r]
 
     IX = np.argsort(B)
-    C = np.cumsum(B[IX[: int(np.round(0.7 * N))]]) / (0.7 * N)
+    C = np.cumsum(B[IX[:r]]) / (0.7 * N)
 
     threshold = np.argmin(np.abs(C - selectedRatio))
     IX = IX[:threshold]
