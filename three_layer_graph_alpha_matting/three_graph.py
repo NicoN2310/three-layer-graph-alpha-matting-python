@@ -90,8 +90,8 @@ def get_sumD(D, IDX, K):
     
     for _ in range(layerNum):
         sumD = resh_1 + sumD[resh_2]
-        sumD = np.reshape(sumD.T, [K, -1])
-        sumD = sumD.T
+        sumD = np.reshape(sumD.T, [K, -1])  # Here
+        sumD = sumD.T                       # Here
         sumD = np.sum(sumD, axis=1)
 
     sumD = (sumD - np.min(sumD)) / (np.max(sumD) - np.min(sumD))

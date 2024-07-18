@@ -7,17 +7,10 @@ def label_expansion(img, cdata):
     I = img.astype(np.float64)
     trimap = cdata.copy().astype(np.float64)
 
-    # Convert img to grayscale and filter it using convolution
-    weights = np.array([0.29894, 0.58704, 0.11402])
-    weights /= weights.sum()
+    grayI = _rgb2gray(I)
 
-    # TODO: Very slow, need to optimize
-    grayI = np.frompyfunc(_custom_round, 1, 1)(
-        np.round(np.dot(I[..., :3], weights), 4)
-    ).astype(np.uint8)
-
-    J = ndimage.generic_filter(grayI.astype(np.float64), _std_filter, size=(7, 7))
-    J = ndimage.generic_filter(J, np.min, size=(9, 9), mode="constant", cval=0)
+    J = _window_stdev(grayI.astype(np.float64), 7)
+    J = _window_min_stride_tricks(J, 4)
 
     # Calculate Geodesic Distance
     M = (trimap < 255).astype(np.float64)
@@ -47,14 +40,34 @@ def label_expansion(img, cdata):
     return trimap.astype(np.uint8)
 
 
+def _rgb2gray(rgb):
+    weights = np.array([0.29894, 0.58704, 0.11402])
+    result = np.dot(rgb[..., :3], weights)
+    result = _custom_round(result)
+    result = result.astype(np.uint8)
+    return result
+
 def _custom_round(x):
     rounded = np.round(x)
     temp = rounded + ((x - rounded) == 0.5) * (rounded % 2)
     return temp
 
 
-def _std_filter(x):
-    return np.std(x, ddof=1)
+def _window_stdev(X, window_size):
+    c1 = ndimage.uniform_filter(X, window_size, mode='reflect')
+    c2 = ndimage.uniform_filter(X*X, window_size, mode='reflect')
+    return np.sqrt(c2 - c1*c1) * np.sqrt(window_size**2 / (window_size**2 - 1))
+
+def _window_min_stride_tricks(image, r, mode="constant", constant_values=0):
+    # O(h w r) algorithmic complexity
+    k = 2 * r + 1
+    image_padded_x = np.pad(image, ((0, 0), (r, r)), mode=mode, constant_values=constant_values)
+    windows_x = np.lib.stride_tricks.sliding_window_view(image_padded_x, (1, k))
+    image_min_x = windows_x.min(axis=(2, 3))
+    image_padded_y = np.pad(image_min_x, ((r, r), (0, 0)), mode=mode, constant_values=constant_values)
+    windows_y = np.lib.stride_tricks.sliding_window_view(image_padded_y, (k, 1))
+    image_min = windows_y.min(axis=(2, 3))
+    return image_min
 
 
 def get_geodesic_distance(I, J, M):
