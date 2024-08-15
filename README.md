@@ -53,9 +53,9 @@ Below you can find the results of the Python implementation & the LFPNet matte. 
 
 ![Results_1](imgs/results_1.png)
 
-|        | Doll  | Donkey | Elephant | Net   | Pineapple | Plant | Plasticbag | Troll |
-|--------|-------|--------|----------|-------|-----------|-------|------------|-------|
-| Own Python Implementation | 0.315 | 0.333  | 0.084    | 1.113 | 0.499     | 0.853 | 2.317      | 0.492 |
+|                             | Doll  | Donkey | Elephant | Net   | Pineapple | Plant | Plasticbag | Troll |
+|-----------------------------|-------|--------|----------|-------|-----------|-------|------------|-------|
+| Own Python Implementation   | 0.312 | 0.332  | 0.084    | 1.113 | 0.502     | 0.858 | 2.306      | 0.504 |
 | Implementation by Li et al. | 0.382 | 0.281  | 0.045    | 1.066 | 0.539     | 0.626 | 2.208      | 0.487 |
 
 ![Results_2](imgs/results_2.png)

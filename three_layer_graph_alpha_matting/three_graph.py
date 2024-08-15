@@ -4,7 +4,7 @@ from three_layer_graph_alpha_matting.kdtree import KDTree
 
 
 def get_three_graph(
-    I, trimap, K0, K1, K2, K3, ratio_1=0.418746, ratio_2=0.154445, debug=False
+    I, trimap, K0, K1, K2, K3, ratio_1=0.418746, ratio_2=0.154445
 ):
     I = I.copy().astype(np.float32)
     trimap = trimap.copy().astype(np.float32)
@@ -80,7 +80,7 @@ def get_three_graph(
     L = 0.1 * (W3.T @ W3) + 0.3 * (W2.T @ W2) + (W1.T @ W1)
     return L.tocsr()
 
-# TODO: Reshape is very slow... need to optimize --> 2/3 better performance
+
 def get_sumD(D, IDX, K):
     layerNum = 120
     sumD = np.sum(D, axis=1)
