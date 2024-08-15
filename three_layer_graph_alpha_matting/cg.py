@@ -1,3 +1,5 @@
+# With permission taken from https://github.com/pymatting/pymatting
+
 import numpy as np
 
 

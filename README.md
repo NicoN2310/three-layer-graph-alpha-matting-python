@@ -11,17 +11,27 @@ This repository contains a Python implementation of the paper "Three-layer graph
 * numba  >= 0.60.0
 * scipy  >= 1.14.0
 
-### Example usage via testrun.py
+To install these dependencies, you can create a new virtual environment and then install them there via the following code:
+
+```bash
+python -m venv env
+
+.\env\Scripts\activate
+
+pip install numpy pillow numba scipy
+```
+
+### Example usage
 
 ```bash
 git clone https://github.com/NicoN2310/three-layer-graph-alpha-matting-python
 
 cd three-layer-graph-alpha-matting-python
 
-python testrun.py
+python run_matting.py
 ```
 
-This will take the input image and trimap and generate the alpha matte and the resulting cutout. Paths of the files can be set in [testrun.py](testrun.py).
+This will take the input image and trimap and generate the alpha matte and the resulting cutout. Paths of the files can be set in [run_matting.py](run_matting.py).
 
 ## Trimap Construction
 
@@ -35,18 +45,18 @@ To create such trimaps for your own images you can use image editing tools like 
 
 ## Evaluation
 
-I tested my implementation using the images from the [Alpha Matting Evaluation Website](https://www.alphamatting.com). 
+I tested my implementation using the images from the [Alpha Matting Evaluation Website](https://www.alphamatting.com) [[2]](#2). 
 
 Since the ground-truth is unkown, I used the images from the best implementation (as of 01.07.2024, regarding MSE) called [LFPNet](https://arxiv.org/abs/2109.12252). As the trimap, I used the first trimap called "small" from the website.
 
-Below you can find the results of the Python implementation & the LFPNet matte. Furthermore, you can find the comparison between the authors matte and the Python implementation matte in regard to LFPNet described as MSE errors.
+Below you can find the results of the Python implementation & the LFPNet matte. Furthermore, you can find the comparison between the authors matte and the Python implementation matte in regard to LFPNet described as MSE errors. You can find the MSE calculation function in this [file](mse_calculation.py).
 
 ![Results_1](imgs/results_1.png)
 
 |        | Doll  | Donkey | Elephant | Net   | Pineapple | Plant | Plasticbag | Troll |
 |--------|-------|--------|----------|-------|-----------|-------|------------|-------|
-| Python | 0.315 | 0.333  | 0.084    | 1.113 | 0.499     | 0.853 | 2.317      | 0.492 |
-| Author | 0.382 | 0.281  | 0.045    | 1.066 | 0.539     | 0.626 | 2.208      | 0.487 |
+| Own Python Implementation | 0.315 | 0.333  | 0.084    | 1.113 | 0.499     | 0.853 | 2.317      | 0.492 |
+| Implementation by Li et al. | 0.382 | 0.281  | 0.045    | 1.066 | 0.539     | 0.626 | 2.208      | 0.487 |
 
 ![Results_2](imgs/results_2.png)
 
@@ -58,3 +68,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <a id="1">[1]</a>
 Chao Li, Ping Wang, Xiangyu Zhu, Huali Pi, Three-layer graph framework with the sumD feature for alpha matting, Computer Vision and Image Understanding, Volume 162, 2017, Pages 34-45, ISSN 1077-3142
+
+<a id="2">[2]</a>
+Christoph Rhemann, Carsten Rother, Jue Wang, Margrit Gelautz, Pushmeet Kohli, Pamela Rott. [A Perceptually Motivated Online Benchmark for Image Matting](http://www.ims.tuwien.ac.at/publications/tuw-180666). Conference on Computer Vision and Pattern Recognition (CVPR), June 2009.
