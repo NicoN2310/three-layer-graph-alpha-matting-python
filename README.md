@@ -33,6 +33,10 @@ python run_matting.py
 
 This will take the input image and trimap and generate the alpha matte and the resulting cutout. Paths of the files can be set in [run_matting.py](run_matting.py).
 
+### Own features
+
+In the original paper, the authors created a new feature called sumD which is used in the algorithm to . 
+
 ## Trimap Construction
 
 To use the underlying alpha matting algorithm you need a trimap. A trimap is a mask for the image, roughly classifying it into three areas:

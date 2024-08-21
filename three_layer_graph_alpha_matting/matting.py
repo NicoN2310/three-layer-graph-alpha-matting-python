@@ -36,7 +36,7 @@ def calculate_matte(
     m, n = t.shape
     L = L1 + delta * L2
 
-    M = (t == 255) | (t == 0).astype(np.uint8)
+    M = ((t == 255) | (t == 0)).astype(np.uint8)
     G = (t == 255).flatten(order="F").reshape(-1, 1).astype(np.uint8)
     Lambda = lambda_val * sparse.diags(M.flatten(order="F"), 0, format="csr")
 
